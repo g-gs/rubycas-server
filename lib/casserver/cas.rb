@@ -289,6 +289,12 @@ module CASServer::CAS
     end
 
     service_with_ticket = service + query_separator + "ticket=" + st.ticket
+    
+    # HACK: Add timestamp for invalidating old login tickets.
+    # This is because some users bookmark our login page with an old login ticket
+    # which then fails to login. We use this timestamp to validate that the login ticket
+    # being sent to cas is not more than 3 minutes old.
+    service_with_ticket = service_with_ticket + "&timestamp=#{Time.now.to_i}"
     service_with_ticket
   end
 
