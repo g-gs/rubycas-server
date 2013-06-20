@@ -86,7 +86,7 @@ module CASServer::CAS
     https.start do |conn|
       path = uri.path.empty? ? '/' : uri.path
       path += '?' + uri.query unless (uri.query.nil? || uri.query.empty?)
-      
+
       pgt = ProxyGrantingTicket.new
       pgt.ticket = "PGT-" + CASServer::Utils.random_string(60)
       pgt.iou = "PGTIOU-" + CASServer::Utils.random_string(57)
@@ -101,7 +101,7 @@ module CASServer::CAS
       response = conn.request_get(path)
       # TODO: follow redirects... 2.5.4 says that redirects MAY be followed
       # NOTE: The following response codes are valid according to the JA-SIG implementation even without following redirects
-      
+
       if %w(200 202 301 302 304).include?(response.code)
         # 3.4 (proxy-granting ticket IOU)
         pgt.save!
@@ -250,11 +250,11 @@ module CASServer::CAS
  <saml:NameID></saml:NameID>
  <samlp:SessionIndex>#{st.ticket}</samlp:SessionIndex>
  </samlp:LogoutRequest>})
- 
+
     begin
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true if uri.scheme =='https'
-      
+
       http.start do |conn|
         response = conn.request(req)
         if response.kind_of? Net::HTTPSuccess
@@ -311,7 +311,7 @@ module CASServer::CAS
   def clean_service_url(dirty_service)
     return dirty_service if dirty_service.blank?
     clean_service = dirty_service.dup
-    ['service', 'ticket', 'gateway', 'renew'].each do |p|
+    ['tgt', 'timestamp', 'service', 'ticket', 'gateway', 'renew'].each do |p|
       clean_service.sub!(Regexp.new("&?#{p}=[^&]*"), '')
     end
 
