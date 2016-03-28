@@ -136,8 +136,8 @@ module CASServer
         print_cli_message "Config file #{config_file.inspect} could not be read!", :error
         raise e
       end
-      
-      config.merge! HashWithIndifferentAccess.new(YAML.load(config_file))
+
+      config.merge! HashWithIndifferentAccess.new(YAML.load(ERB.new(File.read(config_file)).result))
       set :server, config[:server] || 'webrick'
     end
     
